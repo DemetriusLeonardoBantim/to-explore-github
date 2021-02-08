@@ -6,35 +6,68 @@
     </div>
     <div class="form">
       <form action="">
-        <input type="text" v-model="message" placeholder="Digite o nome do repositorio"/>
-        <button type="submit">Pesquisar</button>
+        <input  v-model="usuario" type="text" placeholder="Digite o nome do usuario"/>
+        <button @click.prevent="getProdutos" type="submit">Pesquisar</button>
       </form>
     </div>
-    <div class="repository">
-      <a  href="teste">
-        <img
-          src="https://avatars.githubusercontent.com/u/67908082?s=400&u=3a6871a4bc040c89eae1161a28eac780f2f1703a&v=4"
-          alt="Demetrius"
-        />
-        <div>
-          <strong>DemetriusLeonardoBantim/fpgame</strong>
-          <p>Flappy bird game com js =)</p>
-        </div>
-      </a>
+    <div class="repository" v-for="(dados, id) in repos" :key="id">
+      <ul>
+        <li><img :src="dados.owner.avatar_url" alt=""></li>
+        <li class="full-name">{{dados.full_name}}</li>
+        <li class="name"> Nome do projeto: {{dados.name}}</li>
+        <li> Descricao: {{dados.description}}</li>
+        <li><a :href="dados.html_url">Visitar repositorio -> </a></li>
+      </ul>
     </div>
   </div>
 </template>
 
 <script>
-
-
-
 export default {
-
+  name: 'Home.vue',
+  data(){
+    return {
+      usuario: '',
+      repos: {}
+    }
+  },
+  methods:{
+    getProdutos(){
+      fetch(`https://api.github.com/users/${this.usuario}/repos`)
+      .then(r=> r.json())
+      .then(r => {
+        this.repos = r
+      })
+    }
+  }
 }
 </script>
 
 <style>
+li{
+  list-style: none;
+  padding: 5px;
+}
+
+a{
+  text-decoration: none;
+  color: #333;
+}
+
+ul{
+  transition: 1s;
+}
+
+ul:hover{
+  transform: translateX(10px);
+}
+
+.full-name{
+  color: #333;
+  font-size: 1.5rem;
+}
+
+
 .title h1{
   font-size: 35px;
   color: #3A3A3A;
@@ -98,7 +131,7 @@ div .repository{
   max-width: 700px;
 }
 
-div a{
+div li{
   background: #fff;
   border-radius: 5px;
   width: 100%;
@@ -110,16 +143,8 @@ div a{
   display: flex;
   align-items: center;
   transition: 1s;
-
-
-}
-a + a{
-  margin: 16px;
 }
 
-a:hover{
-  transform: translateX(10px);
-}
 
  .repository img{
   widows: 64px;
